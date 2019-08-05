@@ -1,3 +1,28 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: 'AWS::Serverless-2016-10-31'
-Resources: {}
+name: fullstack-application
+dashboard:
+  component: '@serverless/website'
+  inputs:
+    code:
+      src: dist
+      root: dashboard
+      hook: npm run build
+    env:
+      apiUrl: ${api.url}
+api:
+  component: '@serverless/backend'
+  inputs:
+    code:
+      src: api/src
+    env:
+      dbName: ${database.name}
+      dbRegion: ${database.region}
+database:
+  component: '@serverless/aws-dynamodb'
+  inputs:
+    region: us-east-1
+    attributeDefinitions:
+      - AttributeName: pk
+        AttributeType: S
+    keySchema:
+      - AttributeName: pk
+        KeyType: HASH
